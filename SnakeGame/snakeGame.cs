@@ -10,6 +10,7 @@ namespace SnakeGame
 
     public class snakeGame : Game
     {
+        // deklaration eller innehåll av själva spelet
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont font;
@@ -18,6 +19,7 @@ namespace SnakeGame
         Random rnd;
         Song song;
 
+        // storleken av spel skärmen och Snake elementen
         const int gameHeight = 50;
         const int gameWidth = 100;
         const int snakeSize = 10;
@@ -27,8 +29,8 @@ namespace SnakeGame
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
-
-   
+  
+        // här passar man in skärmen med Snake storleken i spelet
         protected override void Initialize()
         {
             graphics.PreferredBackBufferHeight = gameHeight * snakeSize;
@@ -36,19 +38,19 @@ namespace SnakeGame
             base.Initialize();
         }
 
-
+        // här laddar man upp det man vill ha till spelet
         protected override void LoadContent()
         {
-            rnd = new Random();
+            rnd = new Random(); // skapar funktionalitet för att generera nya slumpmässiga nummer
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            snake = new cSnake(this, GraphicsDevice, spriteBatch, snakeSize);
-            food = new cFood(this, spriteBatch, GraphicsDevice, snakeSize);
+            snake = new cSnake(this, GraphicsDevice, spriteBatch, snakeSize); // här man laddar upp Snake elementen
+            food = new cFood(this, spriteBatch, GraphicsDevice, snakeSize); // här man laddar upp Food elementen
             font = Content.Load<SpriteFont>("font");
-            song = Content.Load<Song>("Music/Nice");
+            song = Content.Load<Song>("Music/Nice"); // här man laddar upp musik till spelet
 
 
-            MediaPlayer.Play(song);
-            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(song); // här startas musiken när spelet börjar
+            MediaPlayer.IsRepeating = true; // här spelas musiken om och om i en loop
 
             this.Components.Add(snake);
             this.Components.Add(food);
@@ -57,12 +59,12 @@ namespace SnakeGame
 
         }
 
-
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
         }
 
+        // positioneringen av Food elementen
         public void SetFoodLocation()
         {
             food.posX = rnd.Next(0, GraphicsDevice.Viewport.Width / snakeSize) * snakeSize;
@@ -74,15 +76,16 @@ namespace SnakeGame
         {
             if (snake.posX == food.posX && snake.posY == food.posY)
             {
-                snake.score++;
+                snake.score++; // varje gång man äter upp en Food element ska talet öka med 1
                 food.active = false;
                 snake.AddTail();
             }
         }
 
+        // Tangentbords Kontroll i spelet
         protected override void Update(GameTime gameTime)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape)) // ifall man vill avsluta spelet så ska man trycka (esc) knappen
                 Exit();
 
             if (!food.active)
@@ -110,6 +113,8 @@ namespace SnakeGame
                 snake.dirX = -1;
                 snake.dirY = 0;
             }
+
+            // när man vill spela om så ska man trycka (Space) knappen på tangentbordet
             else if (Keyboard.GetState().IsKeyDown(Keys.Space) && !snake.run)
             {
                 snake.run = true;
@@ -128,9 +133,9 @@ namespace SnakeGame
             spriteBatch.Begin();
 
             spriteBatch.DrawString(font, "Score: " + snake.score.ToString(), new Vector2(snakeSize), Color.Gray);
+            // hur (Score) texten ska vara 
 
             spriteBatch.End();
-
 
             base.Draw(gameTime);
         }

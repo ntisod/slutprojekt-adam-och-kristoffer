@@ -11,13 +11,15 @@ namespace SnakeGame.Classes
 {
     class cSnake : DrawableGameComponent
     {
-        const int updateInterval = 33;
+        const int updateInterval = 33; // den bestämmer hastigheten hos Snake elementen
 
-        int size = 0;
+        // detta är standardinställningsfunktionen
+        int size = 0; 
         int milliSecondsSinceLastUpdate = 0;
         int oldPosX = 0;
         int oldPosY = 0;
 
+        // detta säger till Snake elementen hur den ska reagera
         public int score { get; set; } = 0;
         public bool run { get; set; } = false;
         public int posX { get; set; } = 0;
@@ -25,10 +27,12 @@ namespace SnakeGame.Classes
         public int dirX { get; set; } = 1;
         public int dirY { get; set; } = 0;
 
-        GraphicsDevice graphics;
+        GraphicsDevice graphics; // skapar resurser, hanterar variabler på systemnivå och skapar skuggor
         SpriteBatch spriteBatch;
         Texture2D pixel;
-        List<Rectangle> tailList;
+        List<Rectangle> tailList; // den gör antal rektanglar och drar rektanglarna 
+        // med olika bredder och höjder men längs samma baslinje
+
 
         public cSnake(Game game, GraphicsDevice graphics, SpriteBatch spriteBatch, int size) : base(game)
         {
@@ -37,15 +41,17 @@ namespace SnakeGame.Classes
             this.graphics = graphics;
 
             pixel = new Texture2D(graphics, 1, 1);
-            pixel.SetData(new Color[] { Color.White });
+            pixel.SetData(new Color[] { Color.White }); // är färgen på Snake elementen när man förlorar
 
-            posX = graphics.Viewport.Width / 2;
+            // positionering av Snake elementen så att den börjar i mitten av skärmen
+            posX = graphics.Viewport.Width / 2; 
             posY = graphics.Viewport.Height / 2;
 
             tailList = new List<Rectangle>();
-            tailList.Add(new Rectangle(posX, posY, size, size));
+            tailList.Add(new Rectangle(posX, posY, size, size)); // gör att man kan lägga till, ta bort och få en mängd av elementen i samlingen.
         }
 
+        // den startar om spelet när du förlorar
         public void ResetSnake()
         {
             tailList.Clear();
@@ -59,13 +65,15 @@ namespace SnakeGame.Classes
 
         public override void Update(GameTime gameTime)
         {
-            milliSecondsSinceLastUpdate += gameTime.ElapsedGameTime.Milliseconds;
+            milliSecondsSinceLastUpdate += gameTime.ElapsedGameTime.Milliseconds; // återvänder tiden som gått sedan den senaste uppdateringen i millisekunder
 
+            // tid updatering
+            // om milliSecondsSinceLastUpdate är större eller lika med updateInterval && run ska:
             if (milliSecondsSinceLastUpdate >= updateInterval && run)
             {
-                milliSecondsSinceLastUpdate = 0;
-                oldPosX = posX;
-                oldPosY = posY;
+                milliSecondsSinceLastUpdate = 0; // milliSecondsSinceLastUpdate vara 0
+                oldPosX = posX; // gammla PosX lika med posX
+                oldPosY = posY; // gammla PosY lika med posY
 
                 posX = posX + dirX * size;
                 posY = posY + dirY * size;
@@ -78,6 +86,7 @@ namespace SnakeGame.Classes
                     return;
                 }
 
+                // detta gör att Snake elementet ökar i storleken när den äter Food elementen 
                 if (tailList.Count > 1)
                 {
                     for (int i = tailList.Count - 1; i > 0; i--)
@@ -101,12 +110,13 @@ namespace SnakeGame.Classes
         public void AddTail()
         {
             tailList.Add(new Rectangle(posX, posY, size, size));
+            // lägger till ett element eller alla element i en annan lista i slutet av en lista
         }
 
         public override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            if (run)
+            if (run) // är funktionerna på spelet när den körs
             {
                 foreach (var item in tailList)
                 {
@@ -114,7 +124,7 @@ namespace SnakeGame.Classes
                     spriteBatch.Draw(pixel, item, Color.Red);
                 }
             }
-            else
+            else // är funktionerna på spelet när man dör
             {
                 foreach (var item in tailList)
                 {

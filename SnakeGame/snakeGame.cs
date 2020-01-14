@@ -192,10 +192,13 @@ namespace SnakeGame
             spriteBatch.Begin();
 
             spriteBatch.DrawString(font, "Score: " + snake.score.ToString(), new Vector2(snakeSize), Color.Gray);
+            if (!snake.run)
+                spriteBatch.DrawString(font, "Press P to Pause and unPause Game", new Vector2(255, 195), Color.Red);
             if (!snake.run )
                 spriteBatch.DrawString(font, "Press Spacebar to Begin Game", new Vector2(255, 225), Color.Red);
             if (!snake.run)
-                spriteBatch.DrawString(font, "Press Escapebar to Quit Game", new Vector2(255, 255), Color.Red);
+                spriteBatch.DrawString(font, "Press Escape to Quit Game", new Vector2(255, 255), Color.Red);
+            
 
             //Hur texten ska vara 
 

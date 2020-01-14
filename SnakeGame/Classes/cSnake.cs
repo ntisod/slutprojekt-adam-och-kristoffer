@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnakeGame.Classes
 {
-    class cSnake : DrawableGameComponent
+    public class cSnake : DrawableGameComponent
     {
         const int updateInterval = 33; // den bestämmer hastigheten hos Snake elementen
 
@@ -34,7 +34,8 @@ namespace SnakeGame.Classes
         // med olika bredder och höjder men längs samma baslinje
 
 
-        public cSnake(Game game, GraphicsDevice graphics, SpriteBatch spriteBatch, int size) : base(game)
+        public cSnake(Game game, GraphicsDevice graphics, SpriteBatch spriteBatch, int size) 
+            : base(game)
         {
             this.size = size;
             this.spriteBatch = spriteBatch;
@@ -51,11 +52,11 @@ namespace SnakeGame.Classes
             tailList.Add(new Rectangle(posX, posY, size, size)); // gör att man kan lägga till, ta bort och få en mängd av elementen i samlingen.
         }
 
-        // den startar om spelet när du förlorar
+        //Spelet resetas när man dör
         public void ResetSnake()
         {
             tailList.Clear();
-            score = 0;
+            score = 0; //Din score börjar på noll när du dör
             posX = graphics.Viewport.Width / 2;
             posY = graphics.Viewport.Height / 2;
 

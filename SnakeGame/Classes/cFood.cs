@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnakeGame.Classes
 {
-    class cFood : DrawableGameComponent // så att funktionerna Draw() och Update() kallas automatiskt.
+    public class cFood : DrawableGameComponent // så att funktionerna Draw() och Update() kallas automatiskt.
     {
         SpriteBatch spriteBatch; // rita massa spriter samtidigt
         Texture2D pixel; 

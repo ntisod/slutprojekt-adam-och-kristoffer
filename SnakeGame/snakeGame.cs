@@ -1,16 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using SnakeGame.Classes;
 using System;
+using System.Text;
 
 namespace SnakeGame
 {
 
     public class snakeGame : Game
     {
-        // deklaration eller innehåll av själva spelet
+        //Deklaration eller innehåll av själva spelet
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont font;
@@ -18,45 +19,65 @@ namespace SnakeGame
         cFood food;
         Random rnd;
         Song song;
+        KeyboardState current, previous;
 
-        // storleken av spel skärmen och Snake elementen
+        MouseState mouseState, previousMouseState;
+        KeyboardState ks;
+        Color col;
+
+        const byte MENU = 0, GAMEOVER = 1, PlayGame = 2;
+        int CurrentScreen = MENU;
+
+        //Variabler för MENU skärmen
+        public Texture2D playgameText;
+        Button playGameButton;
+        public Texture2D bgimage;
+        public Texture2D GameOver;
+
+        //Storleken av spel skärmen och Snake elementen
         const int gameHeight = 50;
         const int gameWidth = 100;
         const int snakeSize = 10;
-               
+        bool gamePaused = false;
+
         public snakeGame()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            this.IsMouseVisible = true;
+            GameOver = null;
         }
   
-        // här passar man in skärmen med Snake storleken i spelet
+        //Här passar man in skärmen med Snake storleken i spelet
         protected override void Initialize()
         {
+            col = Color.White;
+
             graphics.PreferredBackBufferHeight = gameHeight * snakeSize;
             graphics.PreferredBackBufferHeight = gameWidth * snakeSize;
             base.Initialize();
         }
 
-        // här laddar man upp det man vill ha till spelet
+        //Här laddar man upp det man vill ha till spelet
         protected override void LoadContent()
         {
-            rnd = new Random(); // skapar funktionalitet för att generera nya slumpmässiga nummer
+            rnd = new Random(); //Skapar funktionalitet för att generera nya slumpmässiga nummer
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            snake = new cSnake(this, GraphicsDevice, spriteBatch, snakeSize); // här man laddar upp Snake elementen
-            food = new cFood(this, spriteBatch, GraphicsDevice, snakeSize); // här man laddar upp Food elementen
+            snake = new cSnake(this, GraphicsDevice, spriteBatch, snakeSize); //Här man laddar upp Snake elementen
+            food = new cFood(this, spriteBatch, GraphicsDevice, snakeSize); //Här man laddar upp Food elementen
             font = Content.Load<SpriteFont>("font");
-            song = Content.Load<Song>("Music/Nice"); // här man laddar upp musik till spelet
+            song = Content.Load<Song>("Music/Nice"); //Här man laddar upp musik till spelet
 
+            //Saker vi vill ladda på MENU skärmen
+            playgameText = Content.Load<Texture2D>("Bilder/options");
+            bgimage = Content.Load<Texture2D>("Bilder/main menu");
 
-            MediaPlayer.Play(song); // här startas musiken när spelet börjar
-            MediaPlayer.IsRepeating = true; // här spelas musiken om och om i en loop
+            playGameButton = new Button(new Rectangle(300, 50, playgameText.Width, playgameText.Height), true);
+            playGameButton.load(Content, "Bilder/options");
 
             this.Components.Add(snake);
             this.Components.Add(food);
-
             IsMouseVisible = true;
-
         }
 
         protected override void UnloadContent()
@@ -64,7 +85,7 @@ namespace SnakeGame
             // TODO: Unload any non ContentManager content here
         }
 
-        // positioneringen av Food elementen
+        //Positioneringen av Food elementen
         public void SetFoodLocation()
         {
             food.posX = rnd.Next(0, GraphicsDevice.Viewport.Width / snakeSize) * snakeSize;
@@ -76,16 +97,43 @@ namespace SnakeGame
         {
             if (snake.posX == food.posX && snake.posY == food.posY)
             {
-                snake.score++; // varje gång man äter upp en Food element ska talet öka med 1
+                snake.score++; //Varje gång man äter upp en Food element ska talet öka med 1
                 food.active = false;
                 snake.AddTail();
             }
         }
 
-        // Tangentbords Kontroll i spelet
+        //Tangentbords Kontroll i spelet
         protected override void Update(GameTime gameTime)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape)) // ifall man vill avsluta spelet så ska man trycka (esc) knappen
+            //Kontrollera STATE's mus 
+
+            mouseState = Mouse.GetState();
+            ks = Keyboard.GetState();
+
+            switch (CurrentScreen)
+            {
+                case MENU:
+                    //Ändringar på MENU skärmen är här
+
+                    //GÅR TILL PlayGame SKÄRM
+
+                    if (playGameButton.update(new Vector2(mouseState.X, mouseState.Y)) == true && mouseState != previousMouseState && mouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        CurrentScreen = PlayGame;
+                    }
+
+                    break;
+            }
+
+            previous = current;
+            current = Keyboard.GetState();
+
+            if (current.IsKeyUp(Keys.P) && previous.IsKeyDown(Keys.P)) gamePaused = !gamePaused;
+
+            if (gamePaused) return;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape)) //Ifall man vill avsluta spelet så ska man trycka (esc) knappen
                 Exit();
 
             if (!food.active)
@@ -114,17 +162,28 @@ namespace SnakeGame
                 snake.dirY = 0;
             }
 
-            // när man vill spela om så ska man trycka (Space) knappen på tangentbordet
-            else if (Keyboard.GetState().IsKeyDown(Keys.Space) && !snake.run)
+            //När man vill spela om så ska man trycka (Space) knappen på tangentbordet
+            else if (Keyboard.GetState().IsKeyDown(Keys.Space) && !snake.run && CurrentScreen == PlayGame)
             {
                 snake.run = true;
+                MediaPlayer.Play(song); //Här startas musiken när spelet börjar
+                MediaPlayer.IsRepeating = true; //Här spelas musiken om och om i en loop
                 snake.ResetSnake();
+
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.M))
+            {
+                MediaPlayer.Pause();
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.N))
+            {
+                MediaPlayer.Resume();
             }
 
+            previousMouseState = mouseState;
             CheckSnakeFood();         
             base.Update(gameTime);
         }
-
 
         protected override void Draw(GameTime gameTime)
         {
@@ -133,8 +192,23 @@ namespace SnakeGame
             spriteBatch.Begin();
 
             spriteBatch.DrawString(font, "Score: " + snake.score.ToString(), new Vector2(snakeSize), Color.Gray);
-            // hur (Score) texten ska vara 
+            if (!snake.run )
+                spriteBatch.DrawString(font, "Press Spacebar to Begin Game", new Vector2(255, 225), Color.Red);
+            if (!snake.run)
+                spriteBatch.DrawString(font, "Press Escapebar to Quit Game", new Vector2(255, 255), Color.Red);
 
+            //Hur texten ska vara 
+
+            switch (CurrentScreen)
+            {
+                case MENU:
+                    //Det som vi vill att det ska hända på MENU skärmen går här
+
+                    spriteBatch.Draw(bgimage, new Rectangle(0, 0, bgimage.Width, bgimage.Height), Color.White);
+                    spriteBatch.Draw(playgameText, new Rectangle(300, 50, playgameText.Width, playgameText.Height), Color.White);            
+                    break;
+
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);

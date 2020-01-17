@@ -42,9 +42,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Button.cs" />
-    <Compile Include="Classes\cFood.cs" />
-    <Compile Include="Classes\cSnake.cs" />
-    <Compile Include="snakeGame.cs" />
+    <Compile Include="Classes\Food.cs" />
+    <Compile Include="Classes\Snake.cs" />
+    <Compile Include="SnakeGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,6 +61,8 @@
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+    <None Include="ClassDiagram2.cd" />
+    <None Include="ClassDiagram3.cd" />
     <None Include="Content\font.spritefont" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -9,9 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnakeGame.Classes
 {
-    public class cSnake : DrawableGameComponent
+    public class Snake : DrawableGameComponent
     {
-        const int updateInterval = 33; // den bestämmer hastigheten hos Snake elementen
+        const int updateInterval = 32; // den bestämmer hastigheten hos Snake elementen
 
         // detta är standardinställningsfunktionen
         int size = 0; 
@@ -34,7 +34,7 @@ namespace SnakeGame.Classes
         // med olika bredder och höjder men längs samma baslinje
 
 
-        public cSnake(Game game, GraphicsDevice graphics, SpriteBatch spriteBatch, int size) 
+        public Snake(Game game, GraphicsDevice graphics, SpriteBatch spriteBatch, int size) 
             : base(game)
         {
             this.size = size;

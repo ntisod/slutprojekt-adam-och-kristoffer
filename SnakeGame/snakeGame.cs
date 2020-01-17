@@ -9,14 +9,14 @@ using System.Text;
 namespace SnakeGame
 {
 
-    public class snakeGame : Game
+    public class SnakeGame : Game
     {
         //Deklaration eller innehåll av själva spelet
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont font;
-        cSnake snake;
-        cFood food;
+        Snake snake;
+        Food food;
         Random rnd;
         Song song;
         KeyboardState current, previous;
@@ -40,7 +40,7 @@ namespace SnakeGame
         const int snakeSize = 10;
         bool gamePaused = false;
 
-        public snakeGame()
+        public SnakeGame()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -63,8 +63,8 @@ namespace SnakeGame
         {
             rnd = new Random(); //Skapar funktionalitet för att generera nya slumpmässiga nummer
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            snake = new cSnake(this, GraphicsDevice, spriteBatch, snakeSize); //Här man laddar upp Snake elementen
-            food = new cFood(this, spriteBatch, GraphicsDevice, snakeSize); //Här man laddar upp Food elementen
+            snake = new Snake(this, GraphicsDevice, spriteBatch, snakeSize); //Här man laddar upp Snake elementen
+            food = new Food(this, spriteBatch, GraphicsDevice, snakeSize); //Här man laddar upp Food elementen
             font = Content.Load<SpriteFont>("font");
             song = Content.Load<Song>("Music/Nice"); //Här man laddar upp musik till spelet
 
